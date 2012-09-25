@@ -9,6 +9,7 @@ allows callback-less access while traversing your data structures,
 giving much cleaner
 
 Sequelize:
+
 	students.find({where: {id: 34235}}).success(function(student) {
 		student.getCourses().success(function(courses) {
 			console.log(courses);
@@ -16,6 +17,7 @@ Sequelize:
 	});
 
 ReSQL:
+
 	students.find({id: 34235}).courses().then(function(courses) {
 		console.log(courses);
 	});
