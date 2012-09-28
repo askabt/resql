@@ -1,24 +1,24 @@
-ReSQL
+ResQL
 =====
 
-ReSQL is an ORM for Node.JS with an API designed for clean
+ResQL is an ORM for Node.JS with an API designed for clean
 code without nested callbacks. It also gives you
 REST API for reading and writing to the DB in the form of
 Connect/Express middleware.
 
-The API for querying conforms to
+The [Module API](wiki/Module-API) for querying conforms to
 [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A),
 and data modelling API stays close to the table schema.
 
-ReSQL:
+Querying using ResQL:
 
 ```javascript
-	students.find({id: 34235}).courses().then(function(courses) {
+	students.one({id: 34235}).courses().then(function(courses) {
 		console.log(courses);
 	});
 ```
 
-ReSQL is also faster, making a single SQL query (using subqueries
+ResQL is also faster, making a single SQL query (using subqueries
 and joins where necessary) instead of multiple queries in series.
 
 ```sql
@@ -45,10 +45,10 @@ and will result in more queries:
 	SELECT * FROM "Courses" WHERE "id" IN (...)
 ```
 
-Modeling Schema in ReSQL
+Modeling Schema in ResQL
 ------------------------
 
-# Define a new DB #
+### Define a new DB ###
 
 ```javascript
 	db = new rs.connect(options);
@@ -57,8 +57,8 @@ Modeling Schema in ReSQL
 Where options include database access parameters such as hostname,
 credentials and database type (PostgreSQL or MySQL).
 
-# Define tables #
-In ReSQL, you define all the columns, even those related
+### Define tables ###
+In ResQL, you define all the columns, even those related
 to relationships - use your existing DB design knowledge to optimize
 things.
 
@@ -93,13 +93,13 @@ You can also add columns later:
 Tables for associations are no different.
 	
 ```javascript
-	sic = db.table('studentsInCourses', {
+	db.table('studentsInCourses', {
 		studentId: rs.Foreign('students'),
 		courseId:  rs.Foreign('courses')
 	});
 ```
 
-# Define relationships #
+### Define relationships ###
 
 When you set up a foreign key such as with courses.teacherId above, it
 automatically creates a relationship "teacher" (removing "Id" or "_id" at
@@ -135,13 +135,13 @@ and Self-referencing relationships
 
 ```javascript
 	nodes.column('parentId', rs.Foreign(nodes));
-	nodes.relation('children', tree, tree.columns.parentId);
+	nodes.relation('children', 'nodes', 'parentId');
 	
 	nodes.find({parentId: null}).parent().children().
 ```
 
 
-Using the ReSQL REST API
+Using the ResQL REST API
 ------------------------
 
 The rest API maps HTTP GET/POST/DELETE calls to SELECT, INSERT, UPDATE and
@@ -150,4 +150,29 @@ DELETE queries, and sends back a JSON response.
 Authentication, permissions and security, including protection against
 DoS attacks via complex joins, will be handled.
 
+
+License
+-------
+(The MIT License)
+
+Copyright (c) 2009-2011 Askabt <www.askabt.com>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
