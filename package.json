@@ -1,0 +1,18 @@
+{
+  "author": "aravind <aravind@askabt.in> (askabt.com)",
+  "name": "resql",
+  "description": "Generates a REST API for any Relational Schema",
+  "version": "0.0.1",
+  "homepage": "http://github.com/askabt/resql",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/askabt/resql.git"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "main": "index",
+  "engines": {
+    "node": "*"
+  }
+}
