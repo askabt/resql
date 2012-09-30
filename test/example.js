@@ -27,7 +27,15 @@ db.table('studentsInCourses', {
 
 courses.one({id: 1234}).teacher().then(
 	function(result) {
-		console.log("Result:", result);
+		console.log("courses/teacher:", result);
 	}
 );
 
+teachers.relation('coursesTaught', {
+    table:  'courses',  // target table
+    column: 'teacherId' // column in target table
+});
+
+teachers.one({id: 1234}).coursesTaught().then(function(result) {
+	console.log("teachers/coursesTaught", result);
+});

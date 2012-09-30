@@ -30,7 +30,7 @@ SELECT * FROM "Courses" WHERE id IN (
 For comparison, [Sequelize](http://github.com/sdepold/sequelize) needs more callbacks:
 
 ```javascript
-students.find({where: {id: 34235}}).success(function(student) {
+students.one({where: {id: 34235}}).success(function(student) {
 	student.getCourses().success(function(courses) {
 		console.log(courses);
 	});
@@ -106,7 +106,7 @@ automatically creates a relationship "teacher" (removing "Id" or "_id" at
 the end) on the course objects. Now, you can use:
 	
 ```javascript
-courses.find({id: myCourseId}).teacher().then(...);
+courses.one({id: myCourseId}).teacher().then(...);
 ```
 
 In the opposite direction, you have to define a relations manually:
@@ -117,7 +117,7 @@ teachers.relation('coursesTaught', {
 	column: 'teacherId'	// column in target table
 });
 
-teachers.find({id: teachId}).coursesTaught().then(...);
+teachers.one({id: teachId}).coursesTaught().then(...);
 ```
 
 You can similarly define many-many relations
@@ -130,7 +130,7 @@ students.relation('courses', {
 	table: 'studentsInCourses', column: 'studentId', relation: 'course'
 });
 
-courses.find({id: myCourseId}).students().then(...);
+courses.one({id: myCourseId}).students().then(...);
 ```
 
 as well as self-referencing relations.
@@ -139,7 +139,7 @@ as well as self-referencing relations.
 nodes.column('parentId', rs.Foreign(nodes));
 nodes.relation('children', {table: 'nodes', column: 'parentId'});
 
-nodes.find({parentId: null}).parent().children().
+nodes.one({parentId: null}).parent().children().
 ```
 
 If the "Id" or "_id" convention for outbound relations doesn't work for you,
