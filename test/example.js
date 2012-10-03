@@ -1,5 +1,11 @@
 var rs = require("../lib/resql"),
-    db = new rs.connect({});
+    db = new rs.connect({
+		dialect: "mysql",
+		host: "localhost",
+		user: "askabt",
+		password: "askabt",
+		database: "askabt"
+	});
 
 var students = db.table('students', {
 	name: rs.String,
@@ -25,17 +31,29 @@ db.table('studentsInCourses', {
 	courseId:  rs.Foreign('courses')
 });
 
+teachers.relation('coursesTaught', {
+    table:  'courses',  // target table
+    column: 'teacherId' // column in target table
+});
+
+db.sync(true);
+
+students.add({
+	name: "Aravind",
+	dob: new Date("1984-10-01")
+});
+/*
 courses.one({id: 1234}).teacher().then(
 	function(result) {
 		console.log("courses/teacher:", result);
 	}
 );
 
-teachers.relation('coursesTaught', {
-    table:  'courses',  // target table
-    column: 'teacherId' // column in target table
-});
-
 teachers.one({id: 1234}).coursesTaught().then(function(result) {
 	console.log("teachers/coursesTaught", result);
 });
+
+
+/* */
+db.db.end();
+
