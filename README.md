@@ -2,6 +2,12 @@
 
 ResQL is a Node.js ORM for working with MySQL an PostgreSQL databases.
 
+## Contributing
+
+If you're in Bangalore and you're interested in Node.js, open source and getting
+paid for what you love to do, Askabt is looking to sponsor full- or part-time
+contributors to ResQL. Write to [askabt@askabt.in](mailto:askabt@askabt.in).
+
 ## Comparison with [Sequelize](http://github.com/sdepold/sequelize):
 
 Sequelize is currently the most popular Node.js ORM.
