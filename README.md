@@ -1,16 +1,33 @@
-ResQL
-=====
+# ResQL
 
-ResQL is an ORM for Node.JS with an API designed for clean
-code without nested callbacks. It also gives you
-REST API for reading and writing to the DB in the form of
-Connect/Express middleware.
+ResQL is a Node.js ORM for working with MySQL an PostgreSQL databases.
 
-The [Module API](/askabt/resql/wiki/Module-API) methods for querying conforms to
-[CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A),
-and those for data modelling API stays close to the table schema.
+## Comparison with [Sequelize](http://github.com/sdepold/sequelize):
 
-Querying using ResQL:
+Sequelize is currently the most popular Node.js ORM.
+
+Before going into the differences in detail, note that Sequelize is a
+fairly mature project and ResQL is not - right now you shouldn't use ResQL for
+production code.
+
+ResQL's _raison d'être_ is that it lets you code without nested callbacks. It
+accomplishes this by two techniques:
+ - Function chaining to express complex chains of model queries, which are then
+   combined using an SQL query builder before a DB call is made.
+ - Using the [CommonJS Promises/A](http://wiki.commonjs.org/wiki/Promises/A) API
+   to allow chaining of your own operations with model queries.
+
+Example: Consider the following code you might write using Sequelize:
+
+```javascript
+students.find({where: {id: 34235}}).success(function(student) {
+	student.getCourses().success(function(courses) {
+		console.log(courses);
+	});
+});
+```
+
+With ResQL, it's much neater:
 
 ```javascript
 students.one({id: 34235}).courses().then(function(courses) {
@@ -18,8 +35,8 @@ students.one({id: 34235}).courses().then(function(courses) {
 });
 ```
 
-ResQL is also faster, making a single SQL query (using subqueries
-and joins where necessary) instead of multiple queries in series.
+ResQL is also more efficient as it makes a single optimized SQL query (using
+subqueries if necessary):
 
 ```sql
 SELECT * FROM "Courses" WHERE id IN (
@@ -27,17 +44,7 @@ SELECT * FROM "Courses" WHERE id IN (
 )
 ```
 
-For comparison, [Sequelize](http://github.com/sdepold/sequelize) needs more callbacks:
-
-```javascript
-students.one({where: {id: 34235}}).success(function(student) {
-	student.getCourses().success(function(courses) {
-		console.log(courses);
-	});
-});
-```
-
-and will result in more queries:
+instead of
 
 ```sql
 SELECT * FROM "Students" WHERE "id"='34235'
@@ -45,122 +52,16 @@ SELECT * FROM "StudentCourses" WHERE "userId"='34235'
 SELECT * FROM "Courses" WHERE "id" IN (...)
 ```
 
-Modeling Schema in ResQL
-------------------------
+ResQL also provides an HTTP/REST API for reading and writing to the DB in the
+form of Connect/Express middleware.
 
-### Define a new DB ###
+Another thing to note is that the data modeling APIs stay close to the actual
+table schema - you have complete control over foreign key names, for instance,
+and still get the benefits of the ORM's relation handling. A single intuitive
+relation() call replaces Sequelize's hasOne(), hasMany() and belongsTo().
 
-```javascript
-db = new rs.connect(options);
-```
-
-Where options include database access parameters such as hostname,
-credentials and database type (PostgreSQL or MySQL).
-
-### Define tables ###
-In ResQL, you define all the columns, even those related
-to relationships - use your existing DB design knowledge to optimize
-things.
-
-If not specified, an "id" column will be created with type INT AUTOINCREMENT
-or SERIAL
-
-```javascript
-students = db.table('students', {
-	name: rs.String,
-	dob:  rs.Date,
-});
-
-courses = db.table('courses', {
-	id:        rs.String,
-	name:      rs.String,
-	desc:      rs.Text,
-	teacherId: rs.Foreign('teachers')
-});
-
-teachers = db.table('teachers', {
-	name:   rs.String,
-	joined: rs.Date
-})
-```
-
-You can also add columns later:
-
-```javascript
-teachers.column('dob', rs.Date);
-```
-
-Tables for associations are no different.
-	
-```javascript
-db.table('studentsInCourses', {
-	studentId: rs.Foreign('students'),
-	courseId:  rs.Foreign('courses')
-});
-```
-
-### Define relationships ###
-
-When you set up a foreign key such as with courses.teacherId above, it
-automatically creates a relationship "teacher" (removing "Id" or "_id" at
-the end) on the course objects. Now, you can use:
-	
-```javascript
-courses.one({id: myCourseId}).teacher().then(...);
-```
-
-In the opposite direction, you have to define a relations manually:
-
-```javascript
-teachers.relation('coursesTaught', {
-	table:  'courses',	// target table
-	column: 'teacherId'	// column in target table
-});
-
-teachers.one({id: teachId}).coursesTaught().then(...);
-```
-
-You can similarly define many-many relations
-
-```javascript
-courses.relation('students', {
-	table: 'studentsInCourses', column: 'courseId', relation: 'student'
-});
-students.relation('courses', {
-	table: 'studentsInCourses', column: 'studentId', relation: 'course'
-});
-
-courses.one({id: myCourseId}).students().then(...);
-```
-
-as well as self-referencing relations.
-
-```javascript
-nodes.column('parentId', rs.Foreign(nodes));
-nodes.relation('children', {table: 'nodes', column: 'parentId'});
-
-nodes.one({parentId: null}).parent().children().
-```
-
-If the "Id" or "_id" convention for outbound relations doesn't work for you,
-you can also define them using the relation() method by passing the option
-outbound: true.
-
-Using the ResQL REST API
-------------------------
-
-The rest API maps HTTP GET/POST/DELETE calls to SELECT, INSERT, UPDATE and
-DELETE queries, and sends back a JSON response.
-
-Authentication, permissions and security, including protection against
-DoS attacks via complex joins, will be handled.
-
-```javascript
-app = express();
-app.use(db.middleware(options));
-```
-
-This will be updated with more info soon.
+To learn more, check out our [Guide](/askabt/resql/wiki/Guide) and
+[Module API](/askabt/resql/wiki/Module-API).
 
 License
 -------
