@@ -16,26 +16,29 @@ var courses = db.table('courses', {
 	id:        rs.String,
 	name:      rs.String,
 	desc:      rs.Text,
-	teacherId: rs.Foreign('teachers')
+	teacherId: rs.Foreign('teachers'),
+	
+	faculty:   rs.Relation('teacherId')
 });
 
 var teachers = db.table('teachers', {
 	name:   rs.String,
-	joined: rs.Date
+	joined: rs.Date,
+	
+	courses: rs.Relation('courses', 'teacherId')
 });
 
 teachers.column('dob', rs.Date);
+
+console.log(courses.schema);
+
 
 db.table('studentsInCourses', {
 	studentId: rs.Foreign('students'),
 	courseId:  rs.Foreign('courses')
 });
 
-teachers.relation('coursesTaught', {
-    table:  'courses',  // target table
-    column: 'teacherId' // column in target table
-});
-
+process.exit(0);
 db.sync(true);
 
 students.add({
