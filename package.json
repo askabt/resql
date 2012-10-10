@@ -2,7 +2,7 @@
   "author": "aravindet <aravindet@gmail.com> (askabt.com)",
   "name": "resql",
   "description": "Generates a REST API for any Relational Schema",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "http://github.com/askabt/resql",
   "repository": {
     "type": "git",
