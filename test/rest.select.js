@@ -31,7 +31,7 @@ var teachers = db.table('teachers', {
 
 // db.sync(true);
 
-var handler = db.makeRest({});
+var handler = db.restHandler({});
 var form = require("fs").readFileSync("index.html");
 http.createServer(function(req, res) {
 	if(req.url == "/")
