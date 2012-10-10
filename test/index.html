@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+	<head><title>ResQL tests</title></head>
+	<body>
+		<form action="/students/1" method="POST">
+			Name: <input name="name" /><br />
+			Date of birth: <input name="dob" /><br />
+			<input type="checkbox" name="asdf" value="123"/>
+			<input type="checkbox" name="asdf" value="456" />
+			<input type="checkbox" name="asdf" value="789" />
+			<button type="Submit">Send</button>
+		</form>
+		<script src="http://code.jquery.com/jquery.min.js"></script>
+		<script>
+			$(document).ready(function() {
+				$("form").submit(function(evt) {
+					var d = $(this).serializeArray(), i, l, data={}, dn;
+					for(i=0, l=d.length; i<l; i++) {
+						dn = d[i].name;
+						if(data[dn]) {
+							if(data[dn] instanceof Array)  {
+								data[dn].push(d[i].value);
+							} else {
+								data[dn] = [data[dn], d[i].value];
+							}
+						} else {
+							data[dn] = d[i].value;
+						}
+					}
+					
+					console.log(this.method);
+					
+					$.post(this.action, JSON.stringify(data), function(err, data) {
+						console.log(err, data);
+					});
+					
+					evt.preventDefault();
+					return false;
+				})
+			});
+		</script>
+	</body>
+</html>
