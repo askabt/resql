@@ -1,51 +1,63 @@
-var rs = require("../lib/resql"),
-    db = new rs.connect({
-		dialect: "mysql",
-		host: "localhost",
-		user: "askabt",
-		password: "askabt",
-		database: "askabt"
-	});
+var db = require('./testdb');
 
-var students = db.table('students', {
-	name: rs.String,
-	dob:  rs.Date,
+var courses = db.tables.courses,
+	teachers = db.tables.teachers,
+	students = db.tables.students;
+
+
+students.one(
+	{ id: 1 },
+	{ embed: { courses: { teacher: true } } }
+).
+then(function(data) {
+	console.log(JSON.stringify(data, null, 2));
 });
 
-var courses = db.table('courses', {
-	id:        rs.String,
-	name:      rs.String,
-	desc:      rs.Text,
-	teacherId: rs.Foreign('teachers'),
-	
-	faculty:   rs.Relation('teacherId')
-});
 
-var teachers = db.table('teachers', {
-	name:   rs.String,
-	joined: rs.Date,
-	
-	courses: rs.Relation('courses', 'teacherId')
-});
 
-teachers.column('dob', rs.Date);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//db.options.simulate = true;
+
+//db.create();
+//db.putDummyData().then(null,function(reason){console.log(reason);});
+
+
+// students.one({id: 123}).courses().then();
 
 /*
-console.log(courses.schema);
-*/
+//process.exit(0);
+// db.create(true);
 
-db.table('studentsInCourses', {
-	studentId: rs.Foreign('students'),
-	courseId:  rs.Foreign('courses')
+courses.one({id: 1234}).teacher().courses().then(function(res) {
+	console.log(res);
 });
 
-//process.exit(0);
-db.create(true);
-
-
-console.log(courses.one({id: 1234}).faculty().courses().then(function(res) {}));
-
-process.exit();
+// process.exit();
 
 students.add({
 	name: "Aravind",
