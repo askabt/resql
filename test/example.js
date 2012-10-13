@@ -30,28 +30,34 @@ var teachers = db.table('teachers', {
 
 teachers.column('dob', rs.Date);
 
+/*
 console.log(courses.schema);
-
+*/
 
 db.table('studentsInCourses', {
 	studentId: rs.Foreign('students'),
 	courseId:  rs.Foreign('courses')
 });
 
-process.exit(0);
-db.sync(true);
+//process.exit(0);
+db.create(true);
+
+
+console.log(courses.one({id: 1234}).faculty().courses().then(function(res) {}));
+
+process.exit();
 
 students.add({
 	name: "Aravind",
 	dob: new Date("1984-10-01")
 });
-/*
+
 courses.one({id: 1234}).teacher().then(
 	function(result) {
 		console.log("courses/teacher:", result);
 	}
 );
-
+/*
 teachers.one({id: 1234}).coursesTaught().then(function(result) {
 	console.log("teachers/coursesTaught", result);
 });
